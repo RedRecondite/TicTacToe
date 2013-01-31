@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tic Tac Toe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/jquery.mobile-1.2.0.min.css" />
+    <style>
+      /* App custom styles */
+    </style>
+    <script src="/jquery-1.8.2.min.js">
+    </script>
+    <script src="/jquery.mobile-1.2.0.min.js">
+    </script>
+  </head>
+  <body>
+    <div data-role="page">
+      <div data-role="header">
+        <h1>Tic Tac Toe</h1>
+      </div>
+      <div data-role="content">
+        <div data-role="controlgroup">
+          <a data-role="button" data-icon="search" id="watch" href="#game">Watch</a>
+          <a data-role="button" data-icon="plus" id="play" data-rel="dialog" href="#signin">Play</a>
+        </div>
+      </div>
+    </div>
+
+    <div data-role="dialog" id="signin">
+      <div data-role="header" data-theme="d">
+        <h1>Sign In</h1>
+      </div>
+      <div data-role="content" data-theme="c">
+        <label for="username" class="ui-hidden-accessible">Username:</label>
+        <input type="text" name="username" id="username" value="" placeholder="Username"/>
+        <a data-role="button" data-theme="b" id="signinbutton">Sign In</a>
+        <a href="/" data-role="button" data-rel="back" data-theme="c">Cancel</a>
+      </div>
+    </div>
+
+    <div data-role="page" id="game">
+      <div data-role="header">
+        <h1>Tic Tac Toe</h1>
+      </div>
+      <div data-role="content">
+        <div class="ui-grid-b">
+          <div class="ui-block-a">
+            <a id="box1" data-role="button"></a>
+          </div>
+          <div class="ui-block-b">
+            <a id="box2" data-role="button"></a>
+          </div>
+          <div class="ui-block-c">
+            <a id="box3" data-role="button"></a>
+          </div>
+          <div class="ui-block-a">
+            <a id="box4" data-role="button"></a>
+          </div>
+          <div class="ui-block-b">
+            <a id="box5" data-role="button"></a>
+          </div>
+          <div class="ui-block-c">
+            <a id="box6" data-role="button"></a>
+          </div>
+          <div class="ui-block-a">
+            <a id="box7" data-role="button"></a>
+          </div>
+          <div class="ui-block-b">
+            <a id="box8" data-role="button"></a>
+          </div>
+          <div class="ui-block-c">
+            <a id="box9" data-role="button"></a>
+          </div>
+        </div>
+      </div>
+      <div data-role="footer">
+        <h4 id="status"></h4>
+      </div>
+    </div>
+    <script src="/index.js">
+    </script>
+  </body>
+</html>
