@@ -17,6 +17,8 @@ namespace TicTacToe
         private Random mRandom = new Random();
         private Box[] mBoxes = new Box[9];
         private Phase mPhase;
+        private string mXPlayer;
+        private string mOPlayer;
 
         public GameState State
         {
@@ -60,15 +62,36 @@ namespace TicTacToe
             }
         }
 
-        public MoveResult Move( int aIndex, Box aBox )
+        public void AddPlayer( string aPlayer )
+        {
+            if ( mXPlayer == null )
+            {
+                mXPlayer = aPlayer;
+            }
+            else if ( mOPlayer == null )
+            {
+                mOPlayer = aPlayer;
+            }
+        }
+
+        public MoveResult Move( int aIndex, string aUsername )
         {
             lock ( mLock )
             {
-                if ( aIndex >= 0 && aIndex <= 8 && mBoxes[aIndex] == Box.Blank &&
-                     ( ( mPhase == Phase.OTurn && aBox == Box.O ) ||
-                       ( mPhase == Phase.XTurn && aBox == Box.X ) ) )
+                Box lBox = Box.Blank;
+                if ( mXPlayer == aUsername )
                 {
-                    mBoxes[aIndex] = aBox;
+                    lBox = Box.X;
+                }
+                else if ( mOPlayer == aUsername )
+                {
+                    lBox = Box.O;
+                }
+                if ( aIndex >= 0 && aIndex <= 8 && mBoxes[aIndex] == Box.Blank &&
+                     ( ( mPhase == Phase.OTurn && lBox == Box.O ) ||
+                       ( mPhase == Phase.XTurn && lBox == Box.X ) ) )
+                {
+                    mBoxes[aIndex] = lBox;
 
                     // See if anyone won.
                     if ( HasWon( Box.O ) )
@@ -99,6 +122,46 @@ namespace TicTacToe
                     return MoveResult.Invalid;
                 }
             }
+        }
+
+        public string GetStatus()
+        {
+            string lStatus = null;
+            switch ( mPhase )
+            {
+                case Phase.XTurn:
+                    if ( mXPlayer == null )
+                    {
+                        lStatus = "Waiting for X player to connect.";
+                    }
+                    else
+                    {
+                        lStatus = mXPlayer + "'s (X) Turn.";
+                    }
+                    break;
+                case Phase.OTurn:
+                    if ( mOPlayer == null )
+                    {
+                        lStatus = "Waiting for O player to connect.";
+                    }
+                    else
+                    {
+                        lStatus = mOPlayer + "'s (O) Turn.";
+                    }
+                    break;
+                case Phase.XWon:
+                    lStatus = mXPlayer + " (X) Won!";
+                    break;
+                case Phase.OWon:
+                    lStatus = mOPlayer + " (O) Won!";
+                    break;
+                case Phase.Tie:
+                    lStatus = "Everybody Loses!";
+                    break;
+                default:
+                    break;
+            }
+            return lStatus;
         }
 
         private bool HasWon( Box aBox )

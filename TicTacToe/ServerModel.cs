@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.IO;
-using TicTacToe.Properties;
-using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace TicTacToe
 {
@@ -75,20 +74,25 @@ namespace TicTacToe
                     new JProperty( "success", false )
                 );
                 var lUserName = lRequest.QueryString["username"];
-                if ( String.IsNullOrWhiteSpace( lUserName ) == false )
+
+                lock ( mPlayers )
                 {
-                    lState["message"] = "Username must contain letters/numbers.";
-                }
-                else if ( mPlayers.Values.Contains( lUserName ) == false )
-                {
-                    lState["message"] = "Username has already been selected by someone else.";
-                }
-                else if ( mPlayers.Count < 2 )
-                {
-                    mPlayers.AddOrUpdate( lRequest.RemoteEndPoint.Address, lUserName,
-                        ( IPAddress aOldKey, string aOldValue ) => { return lUserName; } );
-                    lState["success"] = true;
-                    
+                    if ( String.IsNullOrWhiteSpace( lUserName ) )
+                    {
+                        lState["message"] = "Username must contain letters/numbers.";
+                    }
+                    else if ( mPlayers.Values.Contains( lUserName ) )
+                    {
+                        lState["message"] = "Username has already been selected by someone else.";
+                    }
+                    else if ( mPlayers.Count < 2 )
+                    {
+                        mPlayers.AddOrUpdate( lRequest.RemoteEndPoint.Address, lUserName,
+                            ( IPAddress aOldKey, string aOldValue ) => { return lUserName; } );
+                        mGame.AddPlayer( lUserName );
+                        lState["success"] = true;
+                        lState["name"] = lUserName;
+                    }
                 }
 
                 var lTextWriter = new StreamWriter( lResponse.OutputStream );
@@ -101,14 +105,43 @@ namespace TicTacToe
                     new JProperty( "player1", "Dan" ),
                     new JProperty( "player2", "Cate" ),
                     new JProperty( "activePlayer", "Cate" ),
-                    new JProperty( "status", "Something!" ),
+                    new JProperty( "status", mGame.GetStatus() ),
                     new JProperty( "boxes",
-                        new JArray( "a", "a", "a", "a", "a", "a", "a", "a", "a" ) )
+                        new JArray( mGame.State.Boxes.Select( b => b == Box.Blank ? "" : b.ToString() ) ) )
                     );
                 using ( var lTextWriter = new StreamWriter( lResponse.OutputStream ) )
                 {
                     lTextWriter.Write( lGameState.ToString() );
                 }
+            }
+            else if ( lRequestFile == "Move" )
+            {
+                var lState = new JObject(
+                    new JProperty( "success", false )
+                );
+                var lBox = int.Parse( lRequest.QueryString["box"] ) - 1;
+                if ( mPlayers.ContainsKey( lRequest.RemoteEndPoint.Address ) )
+                {
+                    if ( mGame.Move( lBox, mPlayers[lRequest.RemoteEndPoint.Address] ) == MoveResult.Success )
+                    {
+                        lState["success"] = true;
+                    }
+                }
+
+                if ( mGame.State.Phase == Phase.OWon ||
+                     mGame.State.Phase == Phase.Tie ||
+                     mGame.State.Phase == Phase.XWon )
+                {
+                    Task.Factory.StartNew( () =>
+                    {
+                        Thread.Sleep( 5000 );
+                        mGame.Reset();
+                    } );
+                }
+
+                var lTextWriter = new StreamWriter( lResponse.OutputStream );
+                lTextWriter.Write( lState.ToString() );
+                lTextWriter.Dispose();
             }
             else
             {

@@ -1,7 +1,7 @@
 function requestStatusUpdate() {
 	"use strict";
-	$.getJSON("/GameState", function(data) {
-		setTimeout(function() {
+	setInterval(function() {
+		$.getJSON("/GameState", function(data) {
 			// Update status of game!
 			$("#box1").html( data.boxes[0] );
 			$("#box2").html( data.boxes[1] );
@@ -13,15 +13,14 @@ function requestStatusUpdate() {
 			$("#box8").html( data.boxes[7] );
 			$("#box9").html( data.boxes[8] );
 			$("#status").html( data.status );
-
-			//requestStatusUpdate();
-		}, 1000 );
-	} );
+		} );
+	}, 100 );
 }
 
 $("#watcher").tap(function() {
 	"use strict";
 	requestStatusUpdate();
+	$('#game-page-state').text( "Watching" );
 	$.mobile.changePage( "#game" );
 });
 
@@ -37,6 +36,29 @@ $("#player").tap(function() {
 $("#signinbutton").tap(function() {
 	"use strict";
 	$.getJSON("/SignIn?username=" + $("#username").val(), function(data) {
-		// TODO
+		if ( data["success"] == false )
+		{
+		  $('#signin-error-message').text( data["message"] );
+		  $('#signin-error-popup').popup( "open" );
+		}
+		else
+		{
+		  requestStatusUpdate();
+		  $('#game-page-state').text( "Playing as " + data["name"] );
+		  $.mobile.changePage( "#game" );
+		}
+	} );
+});
+
+$(document).ready(function() 
+{
+	"use strict";
+	var styles = { 'height': '48px', 'line-height': '48px', 'font-size': '48px' };
+	$('.tic-tac-toe-button').css(styles);
+});
+
+$(".tic-tac-toe-button").tap(function() {
+	"use strict";
+	$.getJSON("/Move?box=" + this.id.substring( 3 ), function(data) {
 	} );
 });

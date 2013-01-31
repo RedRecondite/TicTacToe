@@ -19,13 +19,16 @@
       </div>
       <div data-role="content">
         <div data-role="controlgroup">
-          <a data-role="button" data-icon="search" id="watch" href="#game">Watch</a>
+          <a data-role="button" data-icon="search" id="watcher">Watch</a>
           <a data-role="button" data-icon="plus" id="play" data-rel="dialog" href="#signin">Play</a>
         </div>
       </div>
     </div>
 
     <div data-role="dialog" id="signin">
+      <div data-role="popup" id="signin-error-popup" class="ui-content" data-theme="e" style="max-width:350px;">
+        <p id="signin-error-message"></p>
+      </div>
       <div data-role="header" data-theme="d">
         <h1>Sign In</h1>
       </div>
@@ -40,35 +43,36 @@
     <div data-role="page" id="game">
       <div data-role="header">
         <h1>Tic Tac Toe</h1>
+        <h2 id="game-page-state"></h2>
       </div>
       <div data-role="content">
         <div class="ui-grid-b">
           <div class="ui-block-a">
-            <a id="box1" data-role="button"></a>
+            <a id="box1" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-b">
-            <a id="box2" data-role="button"></a>
+            <a id="box2" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-c">
-            <a id="box3" data-role="button"></a>
+            <a id="box3" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-a">
-            <a id="box4" data-role="button"></a>
+            <a id="box4" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-b">
-            <a id="box5" data-role="button"></a>
+            <a id="box5" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-c">
-            <a id="box6" data-role="button"></a>
+            <a id="box6" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-a">
-            <a id="box7" data-role="button"></a>
+            <a id="box7" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-b">
-            <a id="box8" data-role="button"></a>
+            <a id="box8" class="tic-tac-toe-button" data-role="button"></a>
           </div>
           <div class="ui-block-c">
-            <a id="box9" data-role="button"></a>
+            <a id="box9" class="tic-tac-toe-button" data-role="button"></a>
           </div>
         </div>
       </div>
